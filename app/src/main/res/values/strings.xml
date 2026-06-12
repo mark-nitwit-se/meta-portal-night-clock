@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) Meta Platforms, Inc. and affiliates.
+     This source code is licensed under the MIT license found in the
+     LICENSE file in the root directory of this source tree. -->
+<resources>
+    <string name="app_name">Night Clock</string>
+
+    <!-- Clock -->
+    <string name="alarms_title">Alarms</string>
+    <string name="night_mode">Night mode</string>
+    <string name="exit_night_hint">Tap anywhere to exit night mode</string>
+    <string name="no_alarms">No alarms yet</string>
+    <string name="add_alarm">+ Add alarm</string>
+    <string name="next_alarm">Next: %s</string>
+    <string name="no_next_alarm">No alarm set</string>
+    <string name="no_alarms_hint">No alarms set — tap ⚙ to add one</string>
+    <string name="snoozed_until">Snoozed until %s</string>
+    <string name="alarm_in">in %s</string>
+    <string name="settings">Alarms &amp; settings</string>
+    <string name="close">Close</string>
+    <string name="one_shot_note">Alarms ring once, then switch off until you turn them on again. An unanswered alarm snoozes itself when the melody ends, at most 10 times.</string>
+    <string name="use_24h">24-hour clock</string>
+    <string name="alarm_volume">Alarm volume</string>
+
+    <!-- Alarm editor -->
+    <string name="set_alarm">Set alarm</string>
+    <string name="label_optional">Label (optional)</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+
+    <!-- Ringing screen -->
+    <string name="dismiss">Dismiss</string>
+    <string name="snooze">Snooze 5 min</string>
+    <string name="alarm_default_label">Alarm</string>
+</resources>
