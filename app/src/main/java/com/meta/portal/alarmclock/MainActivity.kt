@@ -76,6 +76,7 @@ import com.meta.portal.alarmclock.ui.theme.NightClockTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -278,6 +279,24 @@ private fun ClockFace(
           fontSize = 28.sp,
           fontWeight = FontWeight.Medium,
       )
+      // Moon phase changes ~0.4%/hour; once a minute is plenty.
+      val moon = remember(now / 60_000) { MoonPhase.at(now) }
+      Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(10.dp),
+          modifier = Modifier.padding(top = 14.dp),
+      ) {
+        MoonGraphic(
+            fraction = moon.fraction.toFloat(),
+            waxing = moon.waxing,
+            modifier = Modifier.size(38.dp),
+        )
+        Text(
+            text = "${(moon.fraction * 100).roundToInt()}%",
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f),
+            fontSize = 18.sp,
+        )
+      }
     }
 
     // Settings cog, kept below the 64dp system overlay strip.
