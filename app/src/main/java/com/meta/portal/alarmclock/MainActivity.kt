@@ -281,10 +281,12 @@ private fun ClockFace(
       )
       // Moon phase changes ~0.4%/hour; once a minute is plenty.
       val moon = remember(now / 60_000) { MoonPhase.at(now) }
+      var moonDetail by remember { mutableStateOf(false) }
+      val dimColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f)
       Row(
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.spacedBy(10.dp),
-          modifier = Modifier.padding(top = 14.dp),
+          modifier = Modifier.padding(top = 14.dp).clickable { moonDetail = !moonDetail },
       ) {
         MoonGraphic(
             fraction = moon.fraction.toFloat(),
@@ -292,9 +294,31 @@ private fun ClockFace(
             modifier = Modifier.size(38.dp),
         )
         Text(
-            text = "${(moon.fraction * 100).roundToInt()}%",
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f),
+            text = "${(moon.fraction * 100).roundToInt()}% · " +
+                stringResource(MoonPhase.phaseNameRes(moon.fraction, moon.waxing)),
+            color = dimColor,
             fontSize = 18.sp,
+        )
+      }
+      if (moonDetail) {
+        val context = LocalContext.current
+        // Upcoming new and full moon, soonest first.
+        val upcomingText =
+            remember(now / 60_000) {
+              listOf(
+                      R.string.moon_new to MoonPhase.nextPhaseAt(now, 360.0),
+                      R.string.moon_full to MoonPhase.nextPhaseAt(now, 180.0),
+                  )
+                  .sortedBy { it.second }
+                  .joinToString("  ·  ") { (nameRes, at) ->
+                    context.getString(nameRes) + " " + daysUntilText(context, at, now)
+                  }
+            }
+        Text(
+            text = upcomingText,
+            color = dimColor,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(top = 6.dp),
         )
       }
     }
@@ -653,6 +677,16 @@ private fun formatHm(hour: Int, minute: Int, is24Hour: Boolean): String {
 
 private fun formatClock(millis: Long, is24Hour: Boolean): String =
     SimpleDateFormat(if (is24Hour) "HH:mm" else "h:mm a", Locale.getDefault()).format(Date(millis))
+
+/** "today" / "tomorrow" / "in N days" until a moon phase instant. */
+private fun daysUntilText(context: android.content.Context, target: Long, now: Long): String {
+  val days = (target - now) / 86_400_000.0
+  return when {
+    days < 0.75 -> context.getString(R.string.moon_today)
+    days < 1.75 -> context.getString(R.string.moon_tomorrow)
+    else -> context.getString(R.string.moon_in_days, days.roundToInt())
+  }
+}
 
 /** "8h 12m" / "42m" until an alarm, rounded up so it never claims 0. */
 private fun formatDelta(ms: Long): String {

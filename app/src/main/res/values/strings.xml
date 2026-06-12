@@ -22,6 +22,19 @@
     <string name="use_24h">24-hour clock</string>
     <string name="alarm_volume">Alarm volume</string>
 
+    <!-- Moon phases -->
+    <string name="moon_new">New moon</string>
+    <string name="moon_waxing_crescent">Waxing crescent</string>
+    <string name="moon_first_quarter">First quarter</string>
+    <string name="moon_waxing_gibbous">Waxing gibbous</string>
+    <string name="moon_full">Full moon</string>
+    <string name="moon_waning_gibbous">Waning gibbous</string>
+    <string name="moon_last_quarter">Last quarter</string>
+    <string name="moon_waning_crescent">Waning crescent</string>
+    <string name="moon_today">today</string>
+    <string name="moon_tomorrow">tomorrow</string>
+    <string name="moon_in_days">in %d days</string>
+
     <!-- Alarm editor -->
     <string name="set_alarm">Set alarm</string>
     <string name="label_optional">Label (optional)</string>
