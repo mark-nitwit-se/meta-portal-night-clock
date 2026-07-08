@@ -603,20 +603,34 @@ private fun NightFace(
   }
 
   val timeFmt = remember(is24Hour) { SimpleDateFormat(if (is24Hour) "HH:mm" else "h:mm", Locale.getDefault()) }
+  val secFmt = remember { SimpleDateFormat("ss", Locale.getDefault()) }
+  val ampmFmt = remember { SimpleDateFormat("a", Locale.getDefault()) }
+  val date = Date(now)
   Box(
       modifier = Modifier.fillMaxSize().background(Color.Black).clickable(onClick = onExit),
       contentAlignment = Alignment.Center,
   ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-      Text(text = timeFmt.format(Date(now)), color = NightAmber, fontSize = 180.sp, fontWeight = FontWeight.Bold)
+      // Same layout as the day clock: a left spacer mirrors the seconds column so it's the
+      // HH:MM that sits dead-centre, with the seconds hanging off to its right.
+      Row(verticalAlignment = Alignment.Bottom) {
+        Spacer(Modifier.width(114.dp))
+        Text(text = timeFmt.format(date), color = NightAmber, fontSize = 288.sp, fontWeight = FontWeight.Bold)
+        Column(modifier = Modifier.padding(start = 14.dp, bottom = 58.dp).width(100.dp)) {
+          if (!is24Hour) {
+            Text(text = ampmFmt.format(date), color = NightAmberDim, fontSize = 40.sp, fontWeight = FontWeight.Bold)
+          }
+          Text(text = secFmt.format(date), color = NightAmberDim, fontSize = 58.sp, fontWeight = FontWeight.Medium)
+        }
+      }
       val nextText =
           when {
             snoozeUntil != null -> stringResource(R.string.snoozed_until, formatClock(snoozeUntil, is24Hour))
             nextAlarm != null -> stringResource(R.string.next_alarm, formatHm(nextAlarm.hour, nextAlarm.minute, is24Hour))
             else -> stringResource(R.string.no_next_alarm)
           }
-      Text(text = nextText, color = NightAmberDim, fontSize = 24.sp)
-      Text(text = stringResource(R.string.exit_night_hint), color = NightAmberDim, fontSize = 16.sp)
+      Text(text = nextText, color = NightAmberDim, fontSize = 34.sp)
+      Text(text = stringResource(R.string.exit_night_hint), color = NightAmberDim, fontSize = 22.sp)
     }
   }
 }
