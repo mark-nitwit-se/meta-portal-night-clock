@@ -255,28 +255,28 @@ private fun ClockFace(
     Column(
         modifier = Modifier.align(Alignment.Center),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
       Row(verticalAlignment = Alignment.Bottom) {
         Text(
             text = timeFmt.format(date),
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 200.sp,
+            fontSize = 240.sp,
             fontWeight = FontWeight.Bold,
         )
         // Fixed width: the digits aren't monospaced, so without it the whole row re-centers
         // (and the big time shifts) every time the seconds change width.
-        Column(modifier = Modifier.padding(start = 12.dp, bottom = 40.dp).width(84.dp)) {
+        Column(modifier = Modifier.padding(start = 14.dp, bottom = 48.dp).width(100.dp)) {
           if (!is24Hour) {
-            Text(text = ampmFmt.format(date), color = MaterialTheme.colorScheme.primary, fontSize = 34.sp, fontWeight = FontWeight.Bold)
+            Text(text = ampmFmt.format(date), color = MaterialTheme.colorScheme.primary, fontSize = 40.sp, fontWeight = FontWeight.Bold)
           }
-          Text(text = secFmt.format(date), color = MaterialTheme.colorScheme.primary, fontSize = 48.sp, fontWeight = FontWeight.Medium)
+          Text(text = secFmt.format(date), color = MaterialTheme.colorScheme.primary, fontSize = 58.sp, fontWeight = FontWeight.Medium)
         }
       }
       Text(
           text = dateFmt.format(date),
           color = MaterialTheme.colorScheme.onBackground,
-          fontSize = 28.sp,
+          fontSize = 34.sp,
           fontWeight = FontWeight.Medium,
       )
       // Moon phase changes ~0.4%/hour; once a minute is plenty.
@@ -285,19 +285,19 @@ private fun ClockFace(
       val dimColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f)
       Row(
           verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(10.dp),
-          modifier = Modifier.padding(top = 14.dp).clickable { moonDetail = !moonDetail },
+          horizontalArrangement = Arrangement.spacedBy(12.dp),
+          modifier = Modifier.padding(top = 16.dp).clickable { moonDetail = !moonDetail },
       ) {
         MoonGraphic(
             fraction = moon.fraction.toFloat(),
             waxing = moon.waxing,
-            modifier = Modifier.size(38.dp),
+            modifier = Modifier.size(46.dp),
         )
         Text(
             text = "${(moon.fraction * 100).roundToInt()}% · " +
                 stringResource(MoonPhase.phaseNameRes(moon.fraction, moon.waxing)),
             color = dimColor,
-            fontSize = 18.sp,
+            fontSize = 22.sp,
         )
       }
       if (moonDetail) {
@@ -317,8 +317,8 @@ private fun ClockFace(
         Text(
             text = upcomingText,
             color = dimColor,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(top = 6.dp),
+            fontSize = 20.sp,
+            modifier = Modifier.padding(top = 8.dp),
         )
       }
     }
@@ -326,9 +326,9 @@ private fun ClockFace(
     // Settings cog, kept below the 64dp system overlay strip.
     TextButton(
         onClick = onOpenAlarms,
-        modifier = Modifier.align(Alignment.TopEnd).padding(top = 72.dp, end = 24.dp).heightIn(min = 52.dp),
+        modifier = Modifier.align(Alignment.TopEnd).padding(top = 72.dp, end = 24.dp).heightIn(min = 60.dp),
     ) {
-      Text(text = "⚙", fontSize = 30.sp, color = MaterialTheme.colorScheme.onBackground)
+      Text(text = "⚙", fontSize = 36.sp, color = MaterialTheme.colorScheme.onBackground)
     }
 
     // Bottom strip: night mode on the left, alarm/snooze status chips on the right.
@@ -336,8 +336,8 @@ private fun ClockFace(
         modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth().padding(horizontal = 24.dp, vertical = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-      TextButton(onClick = onNightMode, modifier = Modifier.heightIn(min = 52.dp)) {
-        Text(text = "🌙  " + stringResource(R.string.night_mode), fontSize = 18.sp)
+      TextButton(onClick = onNightMode, modifier = Modifier.heightIn(min = 60.dp)) {
+        Text(text = "🌙  " + stringResource(R.string.night_mode), fontSize = 22.sp)
       }
       Spacer(Modifier.width(16.dp))
       Row(
@@ -349,7 +349,7 @@ private fun ClockFace(
           Text(
               text = stringResource(R.string.no_alarms_hint),
               color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-              fontSize = 18.sp,
+              fontSize = 22.sp,
           )
         }
         snoozes.forEach { (id, snooze) ->
@@ -377,14 +377,14 @@ private fun ClockFace(
 /** A pill showing one armed alarm or live snooze, with an inline ✕ to turn it off. */
 @Composable
 private fun StatusChip(text: String, onOff: () -> Unit) {
-  Surface(shape = RoundedCornerShape(26.dp), color = MaterialTheme.colorScheme.surface) {
+  Surface(shape = RoundedCornerShape(30.dp), color = MaterialTheme.colorScheme.surface) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.heightIn(min = 52.dp).padding(start = 20.dp, end = 4.dp),
+        modifier = Modifier.heightIn(min = 60.dp).padding(start = 24.dp, end = 4.dp),
     ) {
-      Text(text = text, color = MaterialTheme.colorScheme.onSurface, fontSize = 18.sp)
-      TextButton(onClick = onOff, modifier = Modifier.heightIn(min = 48.dp)) {
-        Text(text = "✕", color = MaterialTheme.colorScheme.primary, fontSize = 20.sp)
+      Text(text = text, color = MaterialTheme.colorScheme.onSurface, fontSize = 22.sp)
+      TextButton(onClick = onOff, modifier = Modifier.heightIn(min = 56.dp)) {
+        Text(text = "✕", color = MaterialTheme.colorScheme.primary, fontSize = 24.sp)
       }
     }
   }
