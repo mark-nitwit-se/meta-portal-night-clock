@@ -21,6 +21,8 @@
     <string name="one_shot_note">Alarms ring once, then switch off until you turn them on again. An unanswered alarm snoozes itself when the melody ends, at most 10 times.</string>
     <string name="use_24h">24-hour clock</string>
     <string name="alarm_volume">Alarm volume</string>
+    <string name="auto_night">Auto night mode</string>
+    <string name="auto_night_hint">From sunset to sunrise (Stockholm)</string>
 
     <!-- Moon phases -->
     <string name="moon_new">New moon</string>

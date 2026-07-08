@@ -99,10 +99,13 @@ fun NightClockApp() {
   val context = LocalContext.current
   var is24Hour by remember { mutableStateOf(SettingsStore.use24h(context)) }
   var volume by remember { mutableStateOf(SettingsStore.volume(context)) }
+  var autoNight by remember { mutableStateOf(SettingsStore.autoNight(context)) }
 
   var alarms by remember { mutableStateOf(AlarmStore.load(context)) }
   var snoozes by remember { mutableStateOf(AlarmStore.loadSnoozes(context)) }
   var nightMode by remember { mutableStateOf(false) }
+  // The last scheduled state auto applied; auto is edge-triggered off this so a manual tap holds.
+  var prevScheduledNight by remember { mutableStateOf<Boolean?>(null) }
   var showAlarms by remember { mutableStateOf(false) }
   var editing by remember { mutableStateOf<Alarm?>(null) }
   var showEditor by remember { mutableStateOf(false) }
@@ -128,6 +131,25 @@ fun NightClockApp() {
     }
     lifecycleOwner.lifecycle.addObserver(observer)
     onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+  }
+
+  // --- Auto night mode by the sun (opt-in; no sensor, so the screen's own glow can't fool it) ---
+  // Recompute once a minute; the sun only crosses the ±15-min boundary at minute granularity.
+  val scheduledNight = remember(autoNight, now / 60_000) { autoNight && SunSchedule.isNight(now) }
+  LaunchedEffect(autoNight, scheduledNight) {
+    if (!autoNight) {
+      prevScheduledNight = null
+      return@LaunchedEffect
+    }
+    if (prevScheduledNight == null) {
+      // Just enabled: sync to the schedule right away.
+      prevScheduledNight = scheduledNight
+      nightMode = scheduledNight
+    } else if (scheduledNight != prevScheduledNight) {
+      // Dusk or dawn crossed → apply. A manual tap between crossings is held until now.
+      prevScheduledNight = scheduledNight
+      nightMode = scheduledNight
+    }
   }
 
   fun persist(list: List<Alarm>) {
@@ -195,6 +217,11 @@ fun NightClockApp() {
         onVolume = {
           volume = it
           SettingsStore.setVolume(context, it)
+        },
+        autoNight = autoNight,
+        onAutoNight = {
+          autoNight = it
+          SettingsStore.setAutoNight(context, it)
         },
         onAdd = {
           editing = null
@@ -402,6 +429,8 @@ private fun AlarmsDialog(
     onUse24h: (Boolean) -> Unit,
     volume: Float,
     onVolume: (Float) -> Unit,
+    autoNight: Boolean,
+    onAutoNight: (Boolean) -> Unit,
     onAdd: () -> Unit,
     onEdit: (Alarm) -> Unit,
     onToggle: (Alarm, Boolean) -> Unit,
@@ -508,6 +537,23 @@ private fun AlarmsDialog(
                 modifier = Modifier.weight(1f),
             )
           }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+          Text(
+              text = "🌙 " + stringResource(R.string.auto_night),
+              color = MaterialTheme.colorScheme.onSurface,
+              fontSize = 18.sp,
+          )
+          Switch(checked = autoNight, onCheckedChange = onAutoNight)
+          Text(
+              text = stringResource(R.string.auto_night_hint),
+              color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+              fontSize = 14.sp,
+          )
         }
         Spacer(Modifier.size(16.dp))
         if (alarms.isEmpty()) {

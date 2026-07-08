@@ -15,6 +15,7 @@ object SettingsStore {
   private const val PREFS = "night_clock_prefs"
   private const val KEY_USE_24H = "use_24h"
   private const val KEY_VOLUME = "alarm_volume"
+  private const val KEY_AUTO_NIGHT = "auto_night"
 
   private fun prefs(context: Context) =
       context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
@@ -35,5 +36,15 @@ object SettingsStore {
 
   fun setVolume(context: Context, value: Float) {
     prefs(context).edit().putFloat(KEY_VOLUME, value).apply()
+  }
+
+  /**
+   * Opt-in: auto-enter night mode after sunset and lift it before sunrise, on a computed
+   * sun schedule (see [SunSchedule]). Off by default so it never surprises.
+   */
+  fun autoNight(context: Context): Boolean = prefs(context).getBoolean(KEY_AUTO_NIGHT, false)
+
+  fun setAutoNight(context: Context, value: Boolean) {
+    prefs(context).edit().putBoolean(KEY_AUTO_NIGHT, value).apply()
   }
 }
