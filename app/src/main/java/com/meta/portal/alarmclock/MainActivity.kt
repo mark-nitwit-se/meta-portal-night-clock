@@ -585,13 +585,13 @@ private fun NightFace(
     onExit: () -> Unit,
 ) {
   val context = LocalContext.current
-  // Dim the panel backlight to a minimum while in night mode; restore on exit.
+  // Dim the panel backlight low (but still readable) while in night mode; restore on exit.
   DisposableEffect(Unit) {
     val activity = context as? ComponentActivity
     val attrs = activity?.window?.attributes
     val previous = attrs?.screenBrightness
     if (activity != null && attrs != null) {
-      attrs.screenBrightness = 0.02f
+      attrs.screenBrightness = 0.05f
       activity.window.attributes = attrs
     }
     onDispose {
@@ -603,26 +603,13 @@ private fun NightFace(
   }
 
   val timeFmt = remember(is24Hour) { SimpleDateFormat(if (is24Hour) "HH:mm" else "h:mm", Locale.getDefault()) }
-  val secFmt = remember { SimpleDateFormat("ss", Locale.getDefault()) }
-  val ampmFmt = remember { SimpleDateFormat("a", Locale.getDefault()) }
-  val date = Date(now)
   Box(
       modifier = Modifier.fillMaxSize().background(Color.Black).clickable(onClick = onExit),
       contentAlignment = Alignment.Center,
   ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-      // Same layout as the day clock: a left spacer mirrors the seconds column so it's the
-      // HH:MM that sits dead-centre, with the seconds hanging off to its right.
-      Row(verticalAlignment = Alignment.Bottom) {
-        Spacer(Modifier.width(114.dp))
-        Text(text = timeFmt.format(date), color = NightAmber, fontSize = 288.sp, fontWeight = FontWeight.Bold)
-        Column(modifier = Modifier.padding(start = 14.dp, bottom = 58.dp).width(100.dp)) {
-          if (!is24Hour) {
-            Text(text = ampmFmt.format(date), color = NightAmberDim, fontSize = 40.sp, fontWeight = FontWeight.Bold)
-          }
-          Text(text = secFmt.format(date), color = NightAmberDim, fontSize = 58.sp, fontWeight = FontWeight.Medium)
-        }
-      }
+      // Big centred HH:MM only — no ticking seconds, for a calm, motionless bedside face.
+      Text(text = timeFmt.format(Date(now)), color = NightAmber, fontSize = 288.sp, fontWeight = FontWeight.Bold)
       val nextText =
           when {
             snoozeUntil != null -> stringResource(R.string.snoozed_until, formatClock(snoozeUntil, is24Hour))
