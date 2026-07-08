@@ -258,15 +258,19 @@ private fun ClockFace(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
       Row(verticalAlignment = Alignment.Bottom) {
+        // A left spacer mirroring the seconds column's footprint (14 start + 100 width) so
+        // it's the HH:MM that sits dead-centre, with the seconds hanging off to its right —
+        // rather than the whole HH:MM + seconds block being what's centred.
+        Spacer(Modifier.width(114.dp))
         Text(
             text = timeFmt.format(date),
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 240.sp,
+            fontSize = 288.sp,
             fontWeight = FontWeight.Bold,
         )
-        // Fixed width: the digits aren't monospaced, so without it the whole row re-centers
-        // (and the big time shifts) every time the seconds change width.
-        Column(modifier = Modifier.padding(start = 14.dp, bottom = 48.dp).width(100.dp)) {
+        // Fixed width: the digits aren't monospaced, so without it the seconds' changing
+        // width would shift the whole row and knock HH:MM off centre every tick.
+        Column(modifier = Modifier.padding(start = 14.dp, bottom = 58.dp).width(100.dp)) {
           if (!is24Hour) {
             Text(text = ampmFmt.format(date), color = MaterialTheme.colorScheme.primary, fontSize = 40.sp, fontWeight = FontWeight.Bold)
           }
